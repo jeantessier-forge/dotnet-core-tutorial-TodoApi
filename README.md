@@ -10,7 +10,7 @@ Based on [this tutorial](https://docs.microsoft.com/en-us/aspnet/core/tutorials/
 dotnet run
 ```
 
-The service will then run on: https://localhost:7103/
+The service will then run on [localhost:7103](https://localhost:7103/).
 
 ## To See All Todo Items
 
@@ -54,3 +54,38 @@ http --verify no DELETE https://localhost:7103/api/todoitems/1
 ```
 
 A `DELETE` request only returns a `204` status code.
+
+## Admin API
+
+Todo items have a secret field that is only accessible through the admin API at
+`/api/admin`.  All operations are the same as on the `/api/todoitems` endpoint.
+
+The `/api/todoitems` endpoint uses a DTO to manage what parts of `TodoItem` are
+exposed and hide the secret field.
+
+```bash
+http --verify no https://localhost:7103/api/todoitems/1 | jq '.'
+```
+
+```json
+{
+    "id": 1,
+    "isComplete": false,
+    "name": "This thing I need to do"
+}
+```
+
+The `/api/admin` uses the raw `TodoItem` model to surface all fields.
+
+```bash
+http --verify no https://localhost:7103/api/admin/1 | jq '.'
+```
+
+```json
+{
+    "id": 1,
+    "isComplete": false,
+    "name": "This thing I need to do",
+    "secret": "This is a secret."
+}
+```
